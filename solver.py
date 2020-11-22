@@ -1,6 +1,7 @@
 import networkx as nx
+from itertools import permutations
 from parse import read_input_file, write_output_file
-from utils import is_valid_solution, calculate_happiness
+from utils import is_valid_solution, calculate_happiness, calculate_stress_for_room
 import sys
 
 
@@ -15,21 +16,44 @@ def solve(G, s):
     """
 
     # TODO: your code here!
-    pass
 
+    nodes = list(G.nodes)
+    perms = list(permutations(nodes))
+    best = 0
+    best_map = {}
+    best_k = 0
+    for k in range(1, len(nodes) + 1):
+        rooms = [[] for _ in range(k)]
+        index = 0
+        for perm in perms:
+            for i in range(len(perm)):
+                rooms[i % k].append(perm[i])
+            D = {}
+            for i in range(len(rooms)):
+                r = rooms[i]
+                for n in r:
+                    D[n] = i
+            k = len(rooms)
+            if is_valid_solution(D, G, s, k):
+                if calculate_happiness(D, G) > best:
+                    best = calculate_happiness(D, G)
+                    best_map = D
+                    best_k = k
+            print(D)
+    return best_map, best_k
 
 # Here's an example of how to run your solver.
 
 # Usage: python3 solver.py test.in
 
-# if __name__ == '__main__':
-#     assert len(sys.argv) == 2
-#     path = sys.argv[1]
-#     G, s = read_input_file(path)
-#     D, k = solve(G, s)
-#     assert is_valid_solution(D, G, s, k)
-#     print("Total Happiness: {}".format(calculate_happiness(D, G)))
-#     write_output_file(D, 'out/test.out')
+if __name__ == '__main__':
+    assert len(sys.argv) == 2
+    path = sys.argv[1]
+    G, s = read_input_file(path)
+    D, k = solve(G, s)
+    assert is_valid_solution(D, G, s, k)
+    print("Total Happiness: {}".format(calculate_happiness(D, G)))
+    write_output_file(D, 'out/test.out')
 
 
 # For testing a folder of inputs to create a folder of outputs, you can use glob (need to import it)
