@@ -44,10 +44,19 @@ def solve(G, s):
                 if i == j:
                     continue
                 ret[i] += G.edges[i,j]["happiness"] - G.edges[i,j]["stress"]
+                # ret[i] += G.edges[i,j]["happiness"]
+                # ret[i] += -G.edges[i,j]["stress"]
         return min(ret, key = lambda x: ret[x])
 
-    while calculate_stress_for_room(rooms[0], G) > s / len(rooms):
-        move(0)
+
+    finished = False
+    while not finished:
+        finished = True
+        for i in range(len(rooms)):
+            room = rooms[i]
+            if calculate_stress_for_room(room, G) > s / len(rooms):
+                move(i)
+                finished = False
 
     D = {}
     for i in range(len(rooms)):
@@ -55,31 +64,39 @@ def solve(G, s):
         for n in r:
             D[n] = i
     k = len(rooms)
-    ret = {}
-    
-    max_happiness = calculate_happiness(D, G)
-    for i in D:
-        for j in D:
-            if i == j:
-                continue
-            D[i], D[j] = D[j], D[i]
-            if is_valid_solution(D, G, s, k):
-                if calculate_happiness(D, G) > max_happiness:
-                    max_happiness = calculate_happiness(D, G)
-                    ret = {}
-                    for key in D:
-                        ret[key] = D[key]
-            D[i], D[j] = D[j], D[i]
+    ret = D
 
-            temp, D[i] = D[i], D[j]
-            if is_valid_solution(D, G, s, k):
-                if calculate_happiness(D, G) > max_happiness:
-                    max_happiness = calculate_happiness(D, G)
-                    ret = {}
-                    for key in D:
-                        ret[key] = D[key]
-            D[i] = temp
 
+    max_happiness = calculate_happiness(ret, G)
+    print(max_happiness)
+
+    improved = True
+    while improved:
+        improved = False
+        for i in D:
+            for j in D:
+                if i == j:
+                    continue
+                D[i], D[j] = D[j], D[i]
+                if is_valid_solution(D, G, s, k):
+                    if calculate_happiness(D, G) > max_happiness:
+                        max_happiness = calculate_happiness(D, G)
+                        ret = {}
+                        for key in D:
+                            ret[key] = D[key]
+                        improved = True
+                D[i], D[j] = D[j], D[i]
+
+                temp, D[i] = D[i], D[j]
+                if is_valid_solution(D, G, s, k):
+                    if calculate_happiness(D, G) > max_happiness:
+                        max_happiness = calculate_happiness(D, G)
+                        ret = {}
+                        for key in D:
+                            ret[key] = D[key]
+                        improved = True
+                D[i] = temp
+        D = ret
     return ret, k
 
 # Here's an example of how to run your solver.
