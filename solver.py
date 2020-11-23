@@ -1,9 +1,7 @@
 import networkx as nx
-from itertools import permutations
 from parse import read_input_file, write_output_file
 from utils import is_valid_solution, calculate_happiness, calculate_stress_for_room
 import sys
-
 
 def solve(G, s):
     """
@@ -16,31 +14,73 @@ def solve(G, s):
     """
 
     # TODO: your code here!
+    rooms = [list(G.nodes)]
 
-    nodes = list(G.nodes)
-    perms = list(permutations(nodes))
-    best = 0
-    best_map = {}
-    best_k = 0
-    for k in range(1, len(nodes) + 1):
-        rooms = [[] for _ in range(k)]
-        index = 0
-        for perm in perms:
-            for i in range(len(perm)):
-                rooms[i % k].append(perm[i])
-            D = {}
-            for i in range(len(rooms)):
-                r = rooms[i]
-                for n in r:
-                    D[n] = i
-            k = len(rooms)
+    def move(index):
+        room = rooms[index]
+        # if room satisfies stress requirement
+        if calculate_stress_for_room(room, G) <= s / len(rooms):
+            return
+ 
+        # person to be removed
+        kick = process(index)
+        # remove person
+        rooms[index].remove(kick)
+        # create new room if necessary
+        if index == len(rooms) - 1:
+            rooms.append([])
+        # add person to new room
+        rooms[index + 1].append(kick)
+        # check next room for validity
+        move(index + 1)
+        
+         
+    def process(index):
+        r = rooms[index]
+        ret = {}
+        for i in r:
+            ret[i] = 0
+            for j in r:
+                if i == j:
+                    continue
+                ret[i] += G.edges[i,j]["happiness"] - G.edges[i,j]["stress"]
+        return min(ret, key = lambda x: ret[x])
+
+    while calculate_stress_for_room(rooms[0], G) > s / len(rooms):
+        move(0)
+
+    D = {}
+    for i in range(len(rooms)):
+        r = rooms[i]
+        for n in r:
+            D[n] = i
+    k = len(rooms)
+    ret = {}
+    
+    max_happiness = calculate_happiness(D, G)
+    for i in D:
+        for j in D:
+            if i == j:
+                continue
+            D[i], D[j] = D[j], D[i]
             if is_valid_solution(D, G, s, k):
-                if calculate_happiness(D, G) > best:
-                    best = calculate_happiness(D, G)
-                    best_map = D
-                    best_k = k
-            print(D)
-    return best_map, best_k
+                if calculate_happiness(D, G) > max_happiness:
+                    max_happiness = calculate_happiness(D, G)
+                    ret = {}
+                    for key in D:
+                        ret[key] = D[key]
+            D[i], D[j] = D[j], D[i]
+
+            temp, D[i] = D[i], D[j]
+            if is_valid_solution(D, G, s, k):
+                if calculate_happiness(D, G) > max_happiness:
+                    max_happiness = calculate_happiness(D, G)
+                    ret = {}
+                    for key in D:
+                        ret[key] = D[key]
+            D[i] = temp
+
+    return ret, k
 
 # Here's an example of how to run your solver.
 
