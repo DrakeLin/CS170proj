@@ -16,11 +16,26 @@ def complete_solve(G, s):
         k: Number of breakout rooms
     """
     rooms = []
+
+    max_happiness = -float('inf')
+    ret = None
+    k = 0
+
     def create(nodes, mapping):
+        nonlocal max_happiness
+        nonlocal ret
+        nonlocal k
         if nodes == []:
             mm = convert_dictionary(mapping)
-            if mapping not in rooms and is_valid_solution(mm, G, s, len(mapping)):
-                rooms.append(mapping)
+            #if mapping not in rooms and is_valid_solution(mm, G, s, len(mapping)):
+                #rooms.append(mapping)
+            room_k = len(mapping)
+            if is_valid_solution(mm, G, s, room_k):
+                happiness = calculate_happiness(mm, G)
+                if happiness > max_happiness:
+                    max_happiness = happiness
+                    ret = mm
+                    k = room_k
             return
         pp = nodes[0]
         r = 0
@@ -46,19 +61,19 @@ def complete_solve(G, s):
     create(n, mapping)
     print("done generating everything")
 
-    max_happiness = -float('inf')
-    ret = None
-    k = 0
+    # max_happiness = -float('inf')
+    # ret = None
+    # k = 0
 
-    for room in rooms:
-        r = convert_dictionary(room)
-        room_k = len(room)
-        if is_valid_solution(r, G, s, room_k):
-            happiness = calculate_happiness(r, G)
-            if happiness > max_happiness:
-                max_happiness = happiness
-                ret = r
-                k = room_k
+    # for room in rooms:
+    #     r = convert_dictionary(room)
+    #     room_k = len(room)
+    #     if is_valid_solution(r, G, s, room_k):
+    #         happiness = calculate_happiness(r, G)
+    #         if happiness > max_happiness:
+    #             max_happiness = happiness
+    #             ret = r
+    #             k = room_k
     return ret, k
 
 
