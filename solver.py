@@ -1,7 +1,66 @@
 import networkx as nx
 from parse import read_input_file, write_output_file
-from utils import is_valid_solution, calculate_happiness, calculate_stress_for_room
+from utils import is_valid_solution, calculate_happiness, calculate_stress_for_room, convert_dictionary
 import sys
+import copy
+
+# complete search for 10 people
+# takes too long for 20 and 50 people
+def complete_solve(G, s):
+    """
+    Args:
+        G: networkx.Graph
+        s: stress_budget
+    Returns:
+        D: Dictionary mapping for student to breakout room r e.g. {0:2, 1:0, 2:1, 3:2}
+        k: Number of breakout rooms
+    """
+    rooms = []
+    def create(nodes, mapping):
+        if nodes == []:
+            mm = convert_dictionary(mapping)
+            if mapping not in rooms and is_valid_solution(mm, G, s, len(mapping)):
+                rooms.append(mapping)
+            return
+        pp = nodes[0]
+        r = 0
+        n = copy.deepcopy(nodes)
+        n.remove(pp)
+        for room in mapping:
+            m = copy.deepcopy(mapping)
+            m[room] = m[room] + [pp]
+            mm = convert_dictionary(m)
+            if is_valid_solution(mm, G, s, len(m)):
+                create(n, m)
+            r += 1
+        m = copy.deepcopy(mapping)
+        m[r] = [pp]
+        create(n, m)
+
+    nodes = list(G.nodes)
+    pp = nodes[0]
+    n = copy.deepcopy(nodes)
+    n.remove(pp)
+    mapping = {}
+    mapping[0] = [pp]
+    create(n, mapping)
+    print("done generating everything")
+
+    max_happiness = -float('inf')
+    ret = None
+    k = 0
+
+    for room in rooms:
+        r = convert_dictionary(room)
+        room_k = len(room)
+        if is_valid_solution(r, G, s, room_k):
+            happiness = calculate_happiness(r, G)
+            if happiness > max_happiness:
+                max_happiness = happiness
+                ret = r
+                k = room_k
+    return ret, k
+
 
 def solve(G, s):
     """
@@ -107,10 +166,11 @@ if __name__ == '__main__':
     assert len(sys.argv) == 2
     path = sys.argv[1]
     G, s = read_input_file(path)
-    D, k = solve(G, s)
+    D, k = complete_solve(G, s)
+    #D, k = solve(G, s)
     assert is_valid_solution(D, G, s, k)
     print("Total Happiness: {}".format(calculate_happiness(D, G)))
-    write_output_file(D, 'out/test.out')
+    write_output_file(D, 'out/test_complete.out')
 
 
 # For testing a folder of inputs to create a folder of outputs, you can use glob (need to import it)
