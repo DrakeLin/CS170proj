@@ -142,7 +142,6 @@ def solve(G, s):
 
 
     max_happiness = calculate_happiness(ret, G)
-    print(max_happiness)
 
     improved = True
     while improved:
@@ -181,11 +180,17 @@ if __name__ == '__main__':
     assert len(sys.argv) == 2
     path = sys.argv[1]
     G, s = read_input_file(path)
-    #D, k = complete_solve(G, s)
-    D, k = solve(G, s)
+    D, k = complete_solve(G, s)
+    #D, k = solve(G, s)
     assert is_valid_solution(D, G, s, k)
     print("Total Happiness: {}".format(calculate_happiness(D, G)))
-    write_output_file(D, 'out/50.out')
+    out_path = 'out/'
+    out_path += path.split('/')[-2]
+    out_path += '/'
+    out_path += path.split('/')[-1]
+    out_path = out_path.split('.')[0]
+    out_path += '.out'
+    write_output_file(D, out_path)
 
 
 # For testing a folder of inputs to create a folder of outputs, you can use glob (need to import it)
