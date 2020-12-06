@@ -264,16 +264,16 @@ if __name__ == '__main__':
         #D, k = complete_solve(G, s)
         # D, k = solve(G, s)
         D1, k1, h1 = solve(G, s, 0)
-        # D2, k2, h2 = solve(G, s, 1)
+        D2, k2, h2 = solve(G, s, 1)
         D3, k3, h3 = solve(G, s, 2)
         assert is_valid_solution(D1, G, s, k1)
-        # assert is_valid_solution(D2, G, s, k2)
+        assert is_valid_solution(D2, G, s, k2)
         assert is_valid_solution(D3, G, s, k3)
-        best = max(h1, h3)
+        best = max([h1, h2, h3])
         if h1 == best:
             D = D1
-        # elif h2 == best:
-        #     D = D2
+        elif h2 == best:
+            D = D2
         elif h3 == best:
             D = D3
         print("Total Happiness: {}".format(calculate_happiness(D, G)))
