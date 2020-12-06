@@ -148,45 +148,45 @@ def solve(G, s, swap):
     improved = True
     # print("before", max_happiness)
 
-    def search_local(depth):
-        nonlocal D
-        nonlocal k
-        nonlocal improved
-        nonlocal max_happiness
-        nonlocal ret
-        if depth == 0:
-            return
-        for i in D:
-            for j in D:
-                if i == j:
-                    continue
-                D[i], D[j] = D[j], D[i]
-                kkk = len(set(D.values()))
-                if is_valid_solution(D, G, s, kkk):
-                    happy = calculate_happiness(D, G)
-                    if happy > max_happiness:
-                        k = kkk
-                        max_happiness = happy
-                        ret = {}
-                        for key in D:
-                            ret[key] = D[key]
-                        improved = True
-                    search_local(depth - 1)
-                D[i], D[j] = D[j], D[i]
+    # def search_local(depth):
+    #     nonlocal D
+    #     nonlocal k
+    #     nonlocal improved
+    #     nonlocal max_happiness
+    #     nonlocal ret
+    #     if depth == 0:
+    #         return
+    #     for i in D:
+    #         for j in D:
+    #             if i == j:
+    #                 continue
+    #             D[i], D[j] = D[j], D[i]
+    #             kkk = len(set(D.values()))
+    #             if is_valid_solution(D, G, s, kkk):
+    #                 happy = calculate_happiness(D, G)
+    #                 if happy > max_happiness:
+    #                     k = kkk
+    #                     max_happiness = happy
+    #                     ret = {}
+    #                     for key in D:
+    #                         ret[key] = D[key]
+    #                     improved = True
+    #                 search_local(depth - 1)
+    #             D[i], D[j] = D[j], D[i]
 
-                temp, D[i] = D[i], D[j]
-                kkk = len(set(D.values()))
-                if is_valid_solution(D, G, s, kkk):
-                    happy = calculate_happiness(D, G)
-                    if happy > max_happiness:
-                        k = kkk
-                        max_happiness = happy
-                        ret = {}
-                        for key in D:
-                            ret[key] = D[key]
-                        improved = True
-                    search_local(depth - 1)
-                D[i] = temp
+    #             temp, D[i] = D[i], D[j]
+    #             kkk = len(set(D.values()))
+    #             if is_valid_solution(D, G, s, kkk):
+    #                 happy = calculate_happiness(D, G)
+    #                 if happy > max_happiness:
+    #                     k = kkk
+    #                     max_happiness = happy
+    #                     ret = {}
+    #                     for key in D:
+    #                         ret[key] = D[key]
+    #                     improved = True
+    #                 search_local(depth - 1)
+    #             D[i] = temp
 
     while improved:
         improved = False
@@ -228,50 +228,62 @@ def solve(G, s, swap):
 # Usage: python3 solver.py test.in
 
 if __name__ == '__main__':
-    assert len(sys.argv) == 2
-    path = sys.argv[1]
-    G, s = read_input_file(path)
-    #D, k = complete_solve(G, s)
-    D1, k1, h1 = solve(G, s, 0)
-    D2, k2, h2 = solve(G, s, 1)
-    D3, k3, h3 = solve(G, s, 2)
-    assert is_valid_solution(D1, G, s, k1)
-    assert is_valid_solution(D2, G, s, k2)
-    assert is_valid_solution(D3, G, s, k3)
-    best = max([h1, h2, h3])
-    if h1 == best:
-        print("h1")
-        D = D1
-    elif h2 == best:
-        print("h2")
-        D = D2
-    elif h3 == best:
-        print("h3")
-        D = D3
-    print("Total Happiness: {}".format(calculate_happiness(D, G)))
+    # assert len(sys.argv) == 2
+    # path = sys.argv[1]
+    # G, s = read_input_file(path)
+    # #D, k = complete_solve(G, s)
+    # D1, k1, h1 = solve(G, s, 0)
+    # D2, k2, h2 = solve(G, s, 1)
+    # D3, k3, h3 = solve(G, s, 2)
+    # assert is_valid_solution(D1, G, s, k1)
+    # assert is_valid_solution(D2, G, s, k2)
+    # assert is_valid_solution(D3, G, s, k3)
+    # best = max([h1, h2, h3])
+    # if h1 == best:
+    #     print("h1")
+    #     D = D1
+    # elif h2 == best:
+    #     print("h2")
+    #     D = D2
+    # elif h3 == best:
+    #     print("h3")
+    #     D = D3
+    # print("Total Happiness: {}".format(calculate_happiness(D, G)))
 
 
-    # for i in range(1, 243):
-    #     path = 'inputs/large/large-'
-    #     path += str(i)
-    #     path += '.in'
-    #     try:
-    #         test = open(path, 'r')
-    #         test.close()
-    #     except:
-    #         continue
-    #     G, s = read_input_file(path)
-    #     #D, k = complete_solve(G, s)
-    #     D, k = solve(G, s)
-    #     assert is_valid_solution(D, G, s, k)
-    #     print("Total Happiness: {}".format(calculate_happiness(D, G)))
-    #     out_path = 'out/'
-    #     out_path += path.split('/')[-2]
-    #     out_path += '/'
-    #     out_path += path.split('/')[-1]
-    #     out_path = out_path.split('.')[0]
-    #     out_path += '.out'
-    #     write_output_file(D, out_path)
+    for i in range(1, 243):
+        path = 'inputs/medium/medium-'
+        path += str(i)
+        path += '.in'
+        try:
+            test = open(path, 'r')
+            test.close()
+        except:
+            continue
+        G, s = read_input_file(path)
+        #D, k = complete_solve(G, s)
+        # D, k = solve(G, s)
+        D1, k1, h1 = solve(G, s, 0)
+        # D2, k2, h2 = solve(G, s, 1)
+        D3, k3, h3 = solve(G, s, 2)
+        assert is_valid_solution(D1, G, s, k1)
+        # assert is_valid_solution(D2, G, s, k2)
+        assert is_valid_solution(D3, G, s, k3)
+        best = max(h1, h3)
+        if h1 == best:
+            D = D1
+        # elif h2 == best:
+        #     D = D2
+        elif h3 == best:
+            D = D3
+        print("Total Happiness: {}".format(calculate_happiness(D, G)))
+        out_path = 'out/'
+        out_path += path.split('/')[-2]
+        out_path += '/'
+        out_path += path.split('/')[-1]
+        out_path = out_path.split('.')[0]
+        out_path += '.out'
+        write_output_file(D, out_path)
 
 
 # For testing a folder of inputs to create a folder of outputs, you can use glob (need to import it)
