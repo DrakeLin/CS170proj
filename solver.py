@@ -146,7 +146,7 @@ def solve(G, s, swap):
 
     max_happiness = calculate_happiness(ret, G)
     improved = True
-    print("before", max_happiness)
+    # print("before", max_happiness)
 
     def search_local(depth):
         nonlocal D
@@ -190,37 +190,37 @@ def solve(G, s, swap):
 
     while improved:
         improved = False
-        search_local(2)
-        D = ret
-        # for i in D:
-        #     for j in D:
-        #         if i == j:
-        #             continue
-        #         D[i], D[j] = D[j], D[i]
-        #         kkk = len(set(D.values()))
-        #         if is_valid_solution(D, G, s, kkk):
-        #             if calculate_happiness(D, G) > max_happiness:
-        #                 max_happiness = calculate_happiness(D, G)
-        #                 ret = {}
-        #                 for key in D:
-        #                     ret[key] = D[key]
-        #                 improved = True
-        #                 k = kkk
-        #         D[i], D[j] = D[j], D[i]
-
-        #         temp, D[i] = D[i], D[j]
-        #         kkk = len(set(D.values()))
-        #         if is_valid_solution(D, G, s, kkk):
-        #             if calculate_happiness(D, G) > max_happiness:
-        #                 max_happiness = calculate_happiness(D, G)
-        #                 ret = {}
-        #                 for key in D:
-        #                     ret[key] = D[key]
-        #                 improved = True
-        #                 k = kkk
-        #         D[i] = temp
+        # search_local(2)
         # D = ret
-    print("after:", max_happiness)
+        for i in D:
+            for j in D:
+                if i == j:
+                    continue
+                D[i], D[j] = D[j], D[i]
+                kkk = len(set(D.values()))
+                if is_valid_solution(D, G, s, kkk):
+                    if calculate_happiness(D, G) > max_happiness:
+                        max_happiness = calculate_happiness(D, G)
+                        ret = {}
+                        for key in D:
+                            ret[key] = D[key]
+                        improved = True
+                        k = kkk
+                D[i], D[j] = D[j], D[i]
+
+                temp, D[i] = D[i], D[j]
+                kkk = len(set(D.values()))
+                if is_valid_solution(D, G, s, kkk):
+                    if calculate_happiness(D, G) > max_happiness:
+                        max_happiness = calculate_happiness(D, G)
+                        ret = {}
+                        for key in D:
+                            ret[key] = D[key]
+                        improved = True
+                        k = kkk
+                D[i] = temp
+        D = ret
+    # print("after:", max_happiness)
     return ret, k, max_happiness
 
 # Here's an example of how to run your solver.
@@ -232,11 +232,11 @@ if __name__ == '__main__':
     path = sys.argv[1]
     G, s = read_input_file(path)
     #D, k = complete_solve(G, s)
-    # D1, k1, h1 = solve(G, s, 0)
-    # D2, k2, h2 = solve(G, s, 1)
+    D1, k1, h1 = solve(G, s, 0)
+    D2, k2, h2 = solve(G, s, 1)
     D3, k3, h3 = solve(G, s, 2)
-    # assert is_valid_solution(D1, G, s, k1)
-    # assert is_valid_solution(D2, G, s, k2)
+    assert is_valid_solution(D1, G, s, k1)
+    assert is_valid_solution(D2, G, s, k2)
     assert is_valid_solution(D3, G, s, k3)
     best = max([h1, h2, h3])
     if h1 == best:
@@ -248,8 +248,6 @@ if __name__ == '__main__':
     elif h3 == best:
         print("h3")
         D = D3
-    D = D3
-    print(D)
     print("Total Happiness: {}".format(calculate_happiness(D, G)))
 
 
